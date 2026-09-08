@@ -24,7 +24,8 @@ jobs:
         shell: pwsh
         run: |
           $config = Get-Content src-tauri/tauri.conf.json | ConvertFrom-Json
-          $config.plugins.updater.PSObject.Properties.Remove("pubkey")
+          # Keep the public key: the runtime updater plugin requires it.
+          # Only artifact signing needs the upstream private key.
           $config.bundle.createUpdaterArtifacts = $false
           $config | ConvertTo-Json -Depth 20 | Set-Content src-tauri/tauri.conf.json
       - name: Build Windows installer
