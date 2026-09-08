@@ -20,6 +20,13 @@ jobs:
           cache: npm
       - name: Install dependencies
         run: npm ci
+      - name: Disable updater signing for custom build
+        shell: pwsh
+        run: |
+          $config = Get-Content src-tauri/tauri.conf.json | ConvertFrom-Json
+          $config.plugins.updater.PSObject.Properties.Remove("pubkey")
+          $config.bundle.createUpdaterArtifacts = $false
+          $config | ConvertTo-Json -Depth 20 | Set-Content src-tauri/tauri.conf.json
       - name: Build Windows installer
         run: npm run tauri build -- --bundles nsis
       - name: Upload installer
